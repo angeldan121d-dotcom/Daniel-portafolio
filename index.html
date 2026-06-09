@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daniel Hernández — Editor & Motion Graphics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #07080f; --white: #eef2f8;
+    --accent: #3b82f6; --accent-bright: #60a5fa; --accent-dark: #1d4ed8;
+    --gray: #0f1120; --gray2: #161929; --muted: #4a5270;
+    --font-display: 'Bebas Neue', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  html.no-smooth { scroll-behavior: auto; }
+  body { background: var(--black); color: var(--white); font-family: var(--font-body); font-weight: 300; line-height: 1.6; overflow-x: hidden; }
+
+  /* ── WA FLOAT ── */
+  .wa-float { position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 999; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+  .wa-bubble { background: #fff; color: #111; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 18px 18px 4px 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.35); white-space: nowrap; opacity: 0; transform: translateX(8px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; }
+  .wa-float:hover .wa-bubble { opacity: 1; transform: translateX(0); }
+  .wa-btn { width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 24px rgba(37,211,102,0.4); transition: transform 0.2s; animation: waPulse 2.5s ease-in-out infinite; }
+  .wa-btn:hover { transform: scale(1.1); animation: none; }
+  .wa-btn svg { width: 28px; height: 28px; fill: #fff; }
+  @keyframes waPulse { 0%,100% { box-shadow: 0 4px 24px rgba(37,211,102,0.4), 0 0 0 0 rgba(37,211,102,0.35); } 50% { box-shadow: 0 4px 24px rgba(37,211,102,0.4), 0 0 0 10px rgba(37,211,102,0); } }
+
+  /* ── NAV ── */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1rem 3rem; background: rgba(7,8,15,0.9); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(59,130,246,0.1); }
+  .nav-logo { font-family: var(--font-display); font-size: 1.45rem; letter-spacing: 0.1em; color: var(--accent-bright); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; visibility: visible; opacity: 1; }
+  .nav-links a { color: var(--white); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.55; transition: opacity 0.2s, color 0.2s; }
+  .nav-links a:hover { opacity: 1; color: var(--accent-bright); }
+
+  /* ── HERO ── */
+  .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 7rem 3rem 3rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -15%; right: -8%; width: 65%; height: 130%; background: radial-gradient(ellipse at center, rgba(59,130,246,0.12) 0%, transparent 68%); pointer-events: none; }
+  .hero-text { position: relative; z-index: 2; }
+  .hero-eyebrow { font-size: 0.74rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent-bright); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.7rem; }
+  .hero-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+  .hero-name { font-family: var(--font-display); font-size: clamp(3.2rem, 6.5vw, 6rem); line-height: 0.92; letter-spacing: 0.03em; margin-bottom: 0.7rem; }
+  .hero-name .line2 { color: var(--accent-bright); }
+  .hero-roles { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+  .role-pill { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid rgba(59,130,246,0.4); color: var(--accent-bright); padding: 0.28rem 0.85rem; border-radius: 999px; }
+  .hero-bio { max-width: 420px; font-size: 0.93rem; color: rgba(238,242,248,0.58); line-height: 1.85; margin-bottom: 2rem; font-style: italic; }
+  .hero-bio strong { color: var(--white); font-style: normal; font-weight: 500; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 0.65rem; background: var(--accent); color: #fff; text-decoration: none; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.85rem 1.8rem; border-radius: 2px; transition: background 0.2s, transform 0.15s; }
+  .hero-cta:hover { background: var(--accent-dark); transform: translateY(-2px); }
+  .hero-cta svg { width: 15px; height: 15px; }
+  .hero-about { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(59,130,246,0.12); }
+  .about-inline-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.7rem; }
+  .tools-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tool-chip { font-size: 0.72rem; color: rgba(238,242,248,0.55); padding: 0.28rem 0.7rem; border: 1px solid rgba(59,130,246,0.15); border-radius: 3px; }
+  .hero-visual { display: flex; justify-content: center; align-items: center; }
+  .reel-frame { width: 560px; height: 315px; background: var(--gray2); border: 1px solid rgba(59,130,246,0.28); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
+  .reel-frame::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(59,130,246,0.08) 0%, transparent 60%); }
+  .reel-corner { position: absolute; width: 16px; height: 16px; border-color: var(--accent); border-style: solid; }
+  .reel-corner.tl { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
+  .reel-corner.br { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+  .play-ring { width: 62px; height: 62px; border: 1.5px solid var(--accent-bright); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
+  .play-ring:hover { background: rgba(59,130,246,0.15); box-shadow: 0 0 28px rgba(59,130,246,0.3); }
+  .play-ring svg { width: 20px; height: 20px; fill: var(--accent-bright); margin-left: 4px; }
+  .reel-label { position: absolute; bottom: 0.8rem; left: 0.9rem; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(238,242,248,0.3); }
+  .reel-tag { position: absolute; top: 0.8rem; right: 0.8rem; background: var(--accent); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.28rem 0.7rem; color: #fff; border-radius: 2px; }
+
+  /* ── SERVICIOS ── */
+  .services { padding: 4rem 3rem; background: var(--gray); }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent-bright); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem; }
+  .section-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--accent); }
+  .section-title { font-family: var(--font-display); font-size: clamp(2rem, 3vw, 3rem); line-height: 0.95; letter-spacing: 0.03em; margin-bottom: 2rem; }
+  .section-title span { color: var(--accent-bright); }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.08); }
+  .service-card { background: var(--black); padding: 1.8rem 1.6rem; transition: background 0.2s; }
+  .service-card:hover { background: var(--gray2); }
+  .service-icon { width: 40px; height: 40px; border: 1px solid rgba(59,130,246,0.35); border-radius: 7px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+  .service-icon svg { width: 20px; height: 20px; stroke: var(--accent-bright); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .service-name { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .service-desc { font-size: 0.85rem; color: rgba(238,242,248,0.48); line-height: 1.7; }
+
+  /* ── PORTFOLIO ── */
+  .portfolio { padding: 4rem 3rem; background: var(--black); }
+  .portfolio-cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .cat-card { background: var(--gray2); border: 1px solid rgba(59,130,246,0.15); padding: 1.8rem; cursor: pointer; border-radius: 4px; transition: border-color 0.25s, background 0.25s, transform 0.2s; display: flex; flex-direction: column; gap: 1rem; }
+  .cat-card:hover { border-color: rgba(59,130,246,0.5); background: #1a1f35; transform: translateY(-3px); }
+  .cat-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 3px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .tb1 { background: linear-gradient(135deg,#060b1a,#0d1f3d); }
+  .tb2 { background: linear-gradient(135deg,#06100f,#0c2525); }
+  .tb3 { background: linear-gradient(135deg,#080610,#14103a); }
+  .tb4 { background: linear-gradient(135deg,#100806,#2a1408); }
+  /* Imagen de preview en categoría */
+  .cat-thumb img.cat-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; transition: opacity 0.3s; }
+  .cat-card:hover .cat-thumb img.cat-preview { opacity: 0.75; }
+  /* Video de preview en categoría */
+  .cat-thumb video.cat-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; transition: opacity 0.3s; pointer-events: none; }
+  .cat-card:hover .cat-thumb video.cat-preview { opacity: 0.75; }
+  .cat-play { width: 38px; height: 38px; border: 1px solid rgba(96,165,250,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .cat-play svg { width: 14px; height: 14px; fill: var(--accent-bright); margin-left: 3px; }
+  .cat-num { position: absolute; top: 0.5rem; left: 0.7rem; font-family: var(--font-display); font-size: 2.5rem; color: rgba(59,130,246,0.07); line-height: 1; }
+  .cat-count { position: absolute; bottom: 0.5rem; right: 0.6rem; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-bright); background: rgba(59,130,246,0.12); padding: 0.2rem 0.5rem; border-radius: 2px; }
+  .cat-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-bright); }
+  .cat-title { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.04em; }
+  .cat-desc { font-size: 0.82rem; color: rgba(238,242,248,0.45); line-height: 1.6; }
+  .cat-arrow { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.4rem; margin-top: auto; }
+  .cat-arrow svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; }
+  .cat-card:hover .cat-arrow svg { transform: translateX(4px); }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(4,5,10,0.97); backdrop-filter: blur(10px); align-items: flex-start; justify-content: center; overflow-y: auto; padding: 2rem 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { width: 100%; max-width: 900px; background: var(--gray); border: 1px solid rgba(59,130,246,0.2); border-radius: 6px; padding: 2rem; animation: fadeUp 0.3s ease both; }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+  .modal-cat { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-bright); margin-bottom: 0.3rem; }
+  .modal-title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.04em; }
+  .modal-close { width: 36px; height: 36px; border: 1px solid rgba(238,242,248,0.2); border-radius: 50%; background: transparent; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: border-color 0.2s, background 0.2s; flex-shrink: 0; }
+  .modal-close:hover { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+  /* ── MODAL GRID ── */
+  /* Por defecto: 2 columnas para horizontales */
+  .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; align-items: start; }
+
+  /* Cuando hay verticales: columnas más angostas */
+  .modal-grid.has-vertical { grid-template-columns: repeat(3, 1fr); }
+
+  /* Si todos son verticales: 3 columnas compactas */
+  .modal-grid.all-vertical { grid-template-columns: repeat(3, 1fr); }
+
+  /* Video card en modal */
+  .modal-video-card { background: var(--black); border: 1px solid rgba(59,130,246,0.1); border-radius: 4px; overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+  .modal-video-card:hover { border-color: rgba(59,130,246,0.4); transform: translateY(-2px); }
+
+  /* Video horizontal: aspecto 16/9 */
+  .modal-video-card.horizontal video { width: 100%; aspect-ratio: 16/9; display: block; background: #000; object-fit: cover; }
+
+  /* Video vertical: aspecto 9/16 */
+  .modal-video-card.vertical video { width: 100%; aspect-ratio: 9/16; display: block; background: #000; object-fit: cover; }
+
+  /* Etiqueta de orientación */
+  .orient-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(238,242,248,0.35); margin-left: 0.4rem; }
+  .orient-badge svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+  /* Placeholder si no hay video */
+  .vid-placeholder { width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; }
+  .vid-placeholder.vertical { aspect-ratio: 9/16; }
+  .vid-placeholder-play { width: 40px; height: 40px; border: 1.5px solid rgba(96,165,250,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .vid-placeholder-play svg { width: 14px; height: 14px; fill: var(--accent-bright); margin-left: 3px; }
+
+  .modal-vid-info { padding: 0.75rem 0.9rem; }
+  .modal-vid-tag { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-bright); margin-bottom: 0.2rem; }
+  .modal-vid-title { font-size: 0.88rem; color: rgba(238,242,248,0.8); }
+  .modal-note { margin-top: 1rem; font-size: 0.78rem; color: rgba(238,242,248,0.25); text-align: center; font-style: italic; }
+
+  /* ── CONTACTO ── */
+  .contact { padding: 4rem 3rem; background: var(--gray); text-align: center; }
+  .contact .section-label { justify-content: center; }
+  .contact .section-label::before { display: none; }
+  .contact .section-title { text-align: center; margin-bottom: 0.8rem; }
+  .contact-desc { font-size: 0.93rem; color: rgba(238,242,248,0.5); line-height: 1.8; margin-bottom: 2rem; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .wa-cta { display: inline-flex; align-items: center; gap: 0.7rem; background: #25D366; color: #fff; text-decoration: none; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.08em; padding: 0.9rem 2rem; border-radius: 4px; transition: background 0.2s, transform 0.15s; }
+  .wa-cta:hover { background: #1db954; transform: translateY(-2px); }
+  .wa-cta svg { width: 20px; height: 20px; fill: #fff; }
+
+  /* ── SOCIAL ICONS ── */
+  .social-links { display: flex; gap: 0.75rem; align-items: center; }
+  .social-btn { width: 40px; height: 40px; border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: rgba(238,242,248,0.55); transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.15s; }
+  .social-btn:hover { border-color: var(--accent-bright); color: var(--accent-bright); background: rgba(59,130,246,0.1); transform: translateY(-2px); }
+  .social-btn svg { width: 18px; height: 18px; fill: currentColor; }
+  /* Social en contacto */
+  .contact-social { margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.75rem; }
+  .contact-social .social-btn { width: 48px; height: 48px; border-radius: 10px; border-color: rgba(59,130,246,0.25); }
+  .contact-social .social-btn svg { width: 22px; height: 22px; }
+
+  /* ── FOOTER ── */
+  footer { border-top: 1px solid rgba(238,242,248,0.06); padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; background: var(--black); }
+  .footer-logo { font-family: var(--font-display); font-size: 1.25rem; color: var(--accent-bright); letter-spacing: 0.08em; }
+  .footer-copy { font-size: 0.74rem; color: var(--muted); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-text > * { animation: fadeUp 0.65s ease both; }
+  .hero-eyebrow { animation-delay: 0.08s; } .hero-name { animation-delay: 0.18s; }
+  .hero-roles { animation-delay: 0.28s; } .hero-bio { animation-delay: 0.38s; }
+  .hero-cta { animation-delay: 0.48s; } .hero-about { animation-delay: 0.58s; }
+
+  /* ── HAMBURGER ── */
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 300; position: relative; }
+  .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ══════════════════════════════════════════
+     RESPONSIVE — TABLET  (≤ 900px)
+  ══════════════════════════════════════════ */
+  @media (max-width: 900px) {
+    /* Nav */
+    nav { padding: 1rem 1.5rem; }
+  .nav-hamburger { display: flex; z-index: 300; }
+
+    /* Overlay de fondo — menú móvil */
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #07080f;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .nav-links.open {
+      display: flex;
+    }
+    .nav-links li { width: 100%; text-align: center; border-bottom: 1px solid rgba(59,130,246,0.1); }
+    .nav-links li:first-child { border-top: 1px solid rgba(59,130,246,0.1); }
+    .nav-links a {
+      font-size: 1.3rem;
+      padding: 1.5rem 0;
+      display: block;
+      opacity: 0.75;
+      letter-spacing: 0.2em;
+      color: var(--white);
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a:active { opacity: 1; color: var(--accent-bright); }
+
+    /* Hero */
+    .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; min-height: auto; gap: 3rem; }
+    .hero::before { width: 100%; height: 50%; top: 0; right: 0; }
+    .hero-visual { order: -1; }
+    .reel-frame { width: 100%; max-width: 420px; height: auto; aspect-ratio: 16/9; }
+
+    /* Servicios */
+    .services { padding: 3rem 1.5rem; }
+    .services-grid { grid-template-columns: 1fr; gap: 1px; }
+
+    /* Portfolio */
+    .portfolio { padding: 3rem 1.5rem; }
+    .portfolio-cats { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+    /* Modal */
+    .modal-box { padding: 1.5rem; }
+    .modal-grid { grid-template-columns: 1fr !important; }
+    .modal-grid.has-vertical { grid-template-columns: repeat(2, 1fr) !important; }
+
+    /* Contacto / Footer */
+    .contact { padding: 3rem 1.5rem; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+
+  /* ══════════════════════════════════════════
+     RESPONSIVE — MÓVIL  (≤ 600px)
+  ══════════════════════════════════════════ */
+  @media (max-width: 600px) {
+    /* Nav */
+    nav { padding: 0.9rem 1.2rem; }
+    .nav-logo { font-size: 1.15rem; }
+
+    /* Hero */
+    .hero { padding: 5rem 1.2rem 2.5rem; gap: 2rem; }
+    .hero-name { font-size: clamp(2.8rem, 12vw, 4rem); }
+    .hero-bio { font-size: 0.88rem; }
+    .hero-cta { width: 100%; justify-content: center; }
+    .reel-frame { max-width: 100%; }
+
+    /* Servicios */
+    .services { padding: 2.5rem 1.2rem; }
+    .section-title { font-size: clamp(1.8rem, 7vw, 2.4rem); }
+
+    /* Portfolio */
+    .portfolio { padding: 2.5rem 1.2rem; }
+    .cat-card { padding: 1.2rem; }
+
+    /* Modal */
+    .modal-overlay { padding: 1rem 0.75rem; }
+    .modal-box { padding: 1.2rem; border-radius: 4px; }
+    .modal-title { font-size: 1.5rem; }
+    .modal-grid { grid-template-columns: 1fr !important; gap: 0.75rem; }
+    /* Verticales en móvil: 2 por fila para no ocupar toda la pantalla */
+    .modal-grid.has-vertical { grid-template-columns: repeat(2, 1fr) !important; }
+    .modal-grid.all-vertical { grid-template-columns: repeat(2, 1fr) !important; }
+
+    /* Contacto */
+    .contact { padding: 2.5rem 1.2rem; }
+    .wa-cta { width: 100%; justify-content: center; }
+
+    /* WA flotante */
+    .wa-float { bottom: 1.2rem; right: 1.2rem; }
+    .wa-btn { width: 48px; height: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- WA FLOAT -->
+<div class="wa-float">
+  <div class="wa-bubble">¡Escríbeme, estoy disponible! 👋</div>
+  <a class="wa-btn" href="https://wa.me/528447843302" target="_blank" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-cat" id="modal-cat"></div>
+        <div class="modal-title" id="modal-title"></div>
+      </div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-grid" id="modal-grid"></div>
+    <div class="modal-note" id="modal-note"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" style="text-decoration:none;">DANIEL HERNÁNDEZ</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#" onclick="closeNav()">Inicio</a></li>
+    <li><a href="#services" onclick="closeNav()">Servicios</a></li>
+    <li><a href="#portfolio" onclick="closeNav()">Mi Trabajo</a></li>
+    <li><a href="#contact" onclick="closeNav()">Contacto</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Menú" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Disponible para proyectos</div>
+    <h1 class="hero-name">DANIEL<br><span class="line2">HERNÁNDEZ</span></h1>
+    <div class="hero-roles">
+      <span class="role-pill">Editor de Video</span>
+      <span class="role-pill">Motion Graphics</span>
+      <span class="role-pill">IA Creativa</span>
+    </div>
+    <p class="hero-bio">Creo contenido visual que destaca. Combino edición de video, motion graphics e inteligencia artificial para desarrollar piezas dinámicas.</p>
+    <a href="#portfolio" class="hero-cta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+      Ver mi trabajo
+    </a>
+    <div class="hero-about">
+      <div class="about-inline-label">Herramientas que uso</div>
+      <div class="tools-row">
+        <span class="tool-chip">After Effects</span>
+        <span class="tool-chip">CapCut Pro</span>
+        <span class="tool-chip">IA Generativa</span>	
+        <span class="tool-chip">Photoshop</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="reel-frame" id="reel-frame">
+      <div class="reel-tag">Demo Reel</div>
+      <div class="reel-corner tl"></div>
+      <div class="reel-corner br"></div>
+      <!--
+        ══════════════════════════════════════════════
+        ✏️  DEMO REEL — CAMBIA TU VIDEO AQUÍ
+        ══════════════════════════════════════════════
+        OPCIÓN A — Video local (.mp4 en tu carpeta videos/):
+          Cambia "videos/TU-DEMO-REEL.mp4" por el nombre real de tu archivo.
+
+        OPCIÓN B — YouTube / Vimeo (embed):
+          Comenta el <video> y descomenta el <iframe> de abajo.
+        ══════════════════════════════════════════════
+      -->
+
+      <!-- ▼ OPCIÓN A: video local (activa esta y comenta el iframe) -->
+      <video id="reel-video"
+        src="videos/demo.mp4"
+        preload="auto"
+        playsinline
+        loop
+        style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;"
+      ></video>
+
+      <!-- ▼ OPCIÓN B: YouTube embed — reemplaza VIDEO_ID por tu ID de YouTube
+      <iframe id="reel-iframe"
+        src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0"
+        style="display:none; position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1;"
+        allow="autoplay; fullscreen"
+        allowfullscreen
+     // ></iframe>
+      -->
+
+      <div class="play-ring" id="reel-play-btn" onclick="playDemoReel()">
+        <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
+      </div>
+      <div class="reel-label">Daniel Hernández · 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="services" id="services">
+  <div class="section-label">Lo que hago</div>
+  <h2 class="section-title">SERVICIOS</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0121 8.847v6.306a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div>
+      <div class="service-name">EDICIÓN DE VIDEO</div>
+      <div class="service-desc">Edición de video en formatos vertical y horizontal para cualquier plataforma.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <div class="service-name">MOTION GRAPHICS</div>
+      <div class="service-desc">Animaciones, títulos y transiciones que elevan la calidad visual de tu contenido.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
+      <div class="service-name">IA CREATIVA</div>
+      <div class="service-desc">Integro herramientas de IA para efectos únicos que marcan diferencia.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTAFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="section-label">Videos</div>
+  <h2 class="section-title">MI TRABAJO</h2>
+  <div class="portfolio-cats">
+    <div class="cat-card" onclick="openModal('motion')">
+      <div class="cat-thumb tb1">
+        <!--
+          ══ THUMBNAIL CATEGORÍA 1: MOTION GRAPHICS ══
+          OPCIÓN A — Imagen estática:
+            <img class="cat-preview" src="images/preview-motion.jpg" alt="Motion Graphics preview">
+          OPCIÓN B — Video en loop (sin sonido):
+          Activa una de las dos quitando el comentario. El archivo debe estar en tu carpeta images/ o videos/.
+	  -->
+	    <video class="cat-preview" src="videos/geminis.mp4" autoplay muted loop playsinline></video>
+        <div class="cat-num">01</div>
+        <div class="cat-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
+        <div class="cat-count" id="count-motion">— videos</div>
+      </div>
+      <div><div class="cat-label">Categoría</div><div class="cat-title">MOTION GRAPHICS</div></div>
+      <div class="cat-desc">Animaciones, intros, títulos y gráficos en movimiento.</div>
+      <div class="cat-arrow">Ver trabajos <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="cat-card" onclick="openModal('reel')">
+      <div class="cat-thumb tb2">
+        <!--
+          ══ THUMBNAIL CATEGORÍA 2: REEL + MOTION ══
+          OPCIÓN A — Imagen estática:
+            <img class="cat-preview" src="images/preview-reel.jpg" alt="Reel preview">
+          OPCIÓN B — Video en loop (sin sonido):
+          Activa una de las dos quitando el comentario.
+        -->
+            <video class="cat-preview" src="videos/dedsec.mp4" autoplay muted loop playsinline></video>
+        <div class="cat-num">02</div>
+        <div class="cat-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
+        <div class="cat-count" id="count-reel">— videos</div>
+      </div>
+      <div><div class="cat-label">Categoría</div><div class="cat-title">REEL + MOTION</div></div>
+      <div class="cat-desc">Edición de reels con motion graphics integrado.</div>
+      <div class="cat-arrow">Ver trabajos <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="cat-card" onclick="openModal('ia')">
+      <div class="cat-thumb tb3">
+        <!--
+          ══ THUMBNAIL CATEGORÍA 3: IA CREATIVA ══
+          OPCIÓN A — Imagen estática:
+            <img class="cat-preview" src="images/preview-ia.jpg" alt="IA Creativa preview">
+          OPCIÓN B — Video en loop (sin sonido):
+          Activa una de las dos quitando el comentario.
+        -->
+            <video class="cat-preview" src="videos/terreno-venta.mp4" autoplay muted loop playsinline></video>
+        <div class="cat-num">03</div>
+        <div class="cat-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
+        <div class="cat-count" id="count-ia">— videos</div>
+      </div>
+      <div><div class="cat-label">Categoría</div><div class="cat-title">IA CREATIVA</div></div>
+      <div class="cat-desc">Proyectos que combinan edición con herramientas de IA.</div>
+      <div class="cat-arrow">Ver trabajos <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="cat-card" onclick="openModal('trabajos')">
+      <div class="cat-thumb tb4">
+        <!--
+          ══ THUMBNAIL CATEGORÍA 4: TRABAJOS ══
+          OPCIÓN A — Imagen estática:
+            <img class="cat-preview" src="images/preview-trabajos.jpg" alt="Trabajos preview">
+          OPCIÓN B — Video en loop (sin sonido):
+          Activa una de las dos quitando el comentario.
+        -->
+            <video class="cat-preview" src="videos/diciembrepromo.mp4" autoplay muted loop playsinline></video>
+        <div class="cat-num">04</div>
+        <div class="cat-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
+        <div class="cat-count" id="count-trabajos">— videos</div>
+      </div>
+      <div><div class="cat-label">Categoría</div><div class="cat-title">TRABAJOS</div></div>
+      <div class="cat-desc">Proyectos y trabajos realizados para clientes.</div>
+      <div class="cat-arrow">Ver trabajos <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contact" id="contact">
+  <div class="section-label">¿Tienes un proyecto?</div>
+  <h2 class="section-title">HABLEMOS<br><span>HOY</span></h2>
+  <p class="contact-desc">Cuéntame tu idea y la hacemos realidad. Respondo rápido — normalmente en menos de una hora.</p>
+  <a href="https://wa.me/528447843302" target="_blank" class="wa-cta">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    Escribir por WhatsApp
+  </a>
+</section>
+
+<footer>
+  <div class="footer-logo">DANIEL HERNÁNDEZ</div>
+  <div class="social-links">
+    <a href="https://www.tiktok.com/@daniel.motiongraphics" target="_blank" class="social-btn" aria-label="TikTok">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/daniel.motiongraphics/" target="_blank" class="social-btn" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+  </div>
+  <div class="footer-copy">© 2025 · Editor de Video & Motion Designer</div>
+</footer>
+
+<script>
+// ============================================================
+//  ✏️  AQUÍ AGREGAS TUS VIDEOS — es lo único que necesitas editar
+//
+//  Para cada video pon:
+//    titulo:      El nombre que aparece debajo del video
+//    etiqueta:    La categoría pequeña (ej: "After Effects", "Reel")
+//    archivo:     El nombre del archivo dentro de la carpeta videos/
+//                 Formatos soportados: .mp4  .webm  .mov
+//    orientacion: 'horizontal'  → video 16:9 (YouTube, Reels horizontales)
+//                 'vertical'    → video 9:16  (TikTok, Reels, Shorts)
+//                 Si no pones este campo, se asume horizontal.
+//
+//  Para AGREGAR un video nuevo: copia uno de los bloques { } 
+//  y pégalo antes del ] de la categoría correspondiente.
+//  Luego sube el archivo a la carpeta "videos/" en Netlify.
+// ============================================================
+
+// ── Demo Reel ──────────────────────────────────────────────
+// Si usas video local: al hacer clic oculta el botón y reproduce el <video>
+// Si usas YouTube iframe: descomenta la línea del iframe y comenta la del video
+function playDemoReel() {
+  const btn   = document.getElementById('reel-play-btn');
+  const video = document.getElementById('reel-video');
+  if (video) {
+    btn.style.display = 'none';
+    video.style.display = 'block';
+    video.controls = true;
+    video.muted = false;
+    video.play();
+  }
+}
+
+// Forzar scroll al top al cargar (evita que el navegador recuerde posición o anchor)
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+document.documentElement.classList.add('no-smooth');
+window.scrollTo(0, 0);
+
+// Autoplay inmediato del demo reel al cargar la página
+window.addEventListener('load', function() {
+  // Scroll al top de nuevo por si acaso
+  window.scrollTo(0, 0);
+  // Restaurar smooth scroll después de un tick
+  setTimeout(function() { document.documentElement.classList.remove('no-smooth'); }, 100);
+
+  const btn   = document.getElementById('reel-play-btn');
+  const video = document.getElementById('reel-video');
+  if (video) {
+    video.muted = true;   // requerido por navegadores para autoplay
+    video.loop  = true;   // loop infinito
+    video.style.display = 'block';
+    video.controls = true;
+    if (btn) btn.style.display = 'none';
+    video.play().catch(function() {
+      // Si el navegador bloquea el autoplay, muestra el botón
+      if (btn) btn.style.display = 'flex';
+      video.style.display = 'none';
+    });
+  }
+});
+
+const VIDEOS = {
+
+  motion: {
+    label: 'Motion Graphics',
+    titulo: 'MOTION GRAPHICS',
+    bg: 'linear-gradient(135deg,#060b1a,#0d1f3d)',
+    lista: [
+      // { titulo: 'Intro Canal', etiqueta: 'After Effects', archivo: 'intro-canal.mp4', orientacion: 'horizontal' },
+      { titulo: 'geminis', etiqueta: 'Motion', archivo: 'geminis.mp4', orientacion: 'vertical' },
+
+      // { titulo: 'Intro Canal', etiqueta: 'After Effects', archivo: 'intro-canal.mp4', orientacion: 'horizontal' },
+      { titulo: 'Pantalla de carga', etiqueta: 'Motion', archivo: 'pantalla-google.mp4', orientacion: 'vertical' },
+   
+      // { titulo: 'Intro Canal', etiqueta: 'After Effects', archivo: 'intro-canal.mp4', orientacion: 'horizontal' },
+      { titulo: 'diri', etiqueta: 'Motion', archivo: 'diri.mp4', orientacion: 'vertical' },
+    ]
+  },
+
+  reel: {
+    label: 'Reel + Motion Graphics',
+    titulo: 'REEL + MOTION',
+    bg: 'linear-gradient(135deg,#06100f,#0c2525)',
+    lista: [
+      { titulo: 'Video inspirado en watch dogs', etiqueta: 'Reel · Motion', archivo: 'dedsec.mp4', orientacion: 'vertical' },
+    ]
+  },
+
+  ia: {
+    label: 'IA Creativa',
+    titulo: 'IA CREATIVA',
+    bg: 'linear-gradient(135deg,#080610,#14103a)',
+    lista: [
+      { titulo: 'Terreno en venta', etiqueta: 'IA + Edición', archivo: 'terreno-venta.mp4', orientacion: 'vertical' },
+      { titulo: 'sk', etiqueta: 'IA + Edición', archivo: 'sk.mp4', orientacion: 'vertical' },
+      { titulo: 'luma', etiqueta: 'IA + Edición', archivo: 'luma.mp4', orientacion: 'vertical' },
+    ]
+  },
+
+  trabajos: {
+    label: 'Trabajos',
+    titulo: 'TRABAJOS',
+    bg: 'linear-gradient(135deg,#100806,#2a1408)',
+    lista: [
+      // Agrega tus videos aquí, ejemplo:
+      { titulo: 'Syacsa', etiqueta: 'Edición', archivo: 'diciembrepromo.mp4', orientacion: 'vertical' },
+      { titulo: 'Absolute', etiqueta: 'Edición', archivo: 'haymuchasopciones.mp4', orientacion: 'vertical' },
+      { titulo: 'Syacsa', etiqueta: 'Edición', archivo: 'proveedor.mp4', orientacion: 'vertical' },
+      { titulo: 'Absolute', etiqueta: 'Edición', archivo: '3errores.mp4', orientacion: 'vertical' },
+      { titulo: 'Syacsa', etiqueta: 'Edición', archivo: 'hmi-ruby-o.mp4', orientacion: 'vertical' },
+      { titulo: 'Absolute', etiqueta: 'Edición', archivo: '3am.mp4', orientacion: 'vertical' },
+      { titulo: 'Syacsa', etiqueta: 'Edición', archivo: 's22.mp4', orientacion: 'vertical' },
+      { titulo: 'Syacsa', etiqueta: 'Edición', archivo: 'somossyacsa.mp4', orientacion: 'vertical' },
+    ]
+  }
+
+};
+
+// ── No necesitas tocar nada de aquí abajo ──────────────────
+
+// Actualiza contadores
+Object.keys(VIDEOS).forEach(key => {
+  const n = VIDEOS[key].lista.length;
+  const el = document.getElementById('count-' + key);
+  if (el) el.textContent = n + (n === 1 ? ' video' : ' videos');
+});
+
+function openModal(key) {
+  const d = VIDEOS[key];
+  document.getElementById('modal-cat').textContent = d.label;
+  document.getElementById('modal-title').textContent = d.titulo;
+
+  const grid = document.getElementById('modal-grid');
+  const note = document.getElementById('modal-note');
+
+  if (d.lista.length === 0) {
+    grid.className = 'modal-grid';
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:3rem 0;color:rgba(238,242,248,0.3);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.1em;margin-bottom:0.5rem;color:rgba(96,165,250,0.4);">PRÓXIMAMENTE</div>
+        <div style="font-size:0.85rem;">Estoy preparando estos trabajos — vuelve pronto.</div>
+      </div>`;
+    note.textContent = '';
+  } else {
+    // Detectar orientaciones presentes
+    const tieneVertical   = d.lista.some(v => v.orientacion === 'vertical');
+    const todosVerticales = d.lista.every(v => v.orientacion === 'vertical');
+
+    grid.className = 'modal-grid' +
+      (todosVerticales ? ' all-vertical' : tieneVertical ? ' has-vertical' : '');
+
+    grid.innerHTML = d.lista.map(v => {
+      const orient = v.orientacion === 'vertical' ? 'vertical' : 'horizontal';
+      return `
+        <div class="modal-video-card ${orient}">
+          <video
+            src="videos/${v.archivo}"
+            controls
+            preload="metadata"
+            playsinline
+          ></video>
+          <div class="modal-vid-info">
+            <div class="modal-vid-tag">${v.etiqueta}</div>
+            <div class="modal-vid-title">${v.titulo}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    note.textContent = 'Haz clic en ▶ para reproducir cada video.';
+  }
+
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.querySelectorAll('#modal-grid video').forEach(v => v.pause());
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal-close').onclick = closeModal;
+document.getElementById('modal').onclick = function(e) { if (e.target === this) closeModal(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── Menú hamburguesa ──
+function toggleNav() {
+  const btn   = document.getElementById('nav-hamburger');
+  const links = document.getElementById('nav-links');
+  btn.classList.toggle('open');
+  links.classList.toggle('open');
+  document.body.style.overflow = links.classList.contains('open') ? 'hidden' : '';
+}
+function closeNav() {
+  document.getElementById('nav-hamburger').classList.remove('open');
+  document.getElementById('nav-links').classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>
